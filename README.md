@@ -1,6 +1,6 @@
 # Task Manager Web App
 
-A beautiful, premium task and project management system built with Django and PostgreSQL. This application features a modern "Lavender Theme" UI, role-based access control, and seamless project tracking.
+A beautiful, premium task and project management system built with Django and PostgreSQL. This application features a modern  role-based access control, and seamless project tracking.
 
 ## ✨ Features
 
@@ -63,4 +63,4 @@ A beautiful, premium task and project management system built with Django and Po
 
 
 ---
-*Built with ❤️ using Django*
+*Built with using Django*
