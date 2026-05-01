@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Member Login{% endblock %}
+
+{% block content %}
+<h2>Member Login</h2>
+<form method="POST">
+    {% csrf_token %}
+    <div style="margin-bottom: 1rem;">
+        <label>Username:</label>
+        <input type="text" name="username" required style="width: 100%; padding: 0.5rem;">
+    </div>
+    <div style="margin-bottom: 1rem;">
+        <label>Password:</label>
+        <input type="password" name="password" required style="width: 100%; padding: 0.5rem;">
+    </div>
+    <button type="submit" style="padding: 0.5rem 1rem; background: #8a63c2; color: white; border: none; border-radius: 3px;">Login</button>
+</form>
+{% endblock %}

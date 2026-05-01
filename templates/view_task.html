@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Task - {{ task.title }}{% endblock %}
+
+{% block content %}
+<h2>Task: {{ task.title }}</h2>
+
+<div style="background: #F4EFFC; padding: 1rem; border-left: 4px solid #8a63c2; margin-bottom: 1rem; border-radius: 3px;">
+    <h4>Task Information</h4>
+    <p><strong>Project:</strong> {{ task.project.name }}</p>
+    <p><strong>Description:</strong> {{ task.description }}</p>
+    <p><strong>Status:</strong> 
+        <span style="padding: 0.25rem 0.5rem; border-radius: 3px; {% if task.status == 'pending' %}background: #A69CB7; color: white;{% elif task.status == 'in_progress' %}background: #6B4C9A; color: white;{% elif task.status == 'completed' %}background: #9b72cf; color: white;{% else %}background: #b49ccc; color: white;{% endif %}">
+            {{ task.get_status_display }}
+        </span>
+    </p>
+    <p><strong>Assigned To:</strong> {{ task.assigned_to.username }}</p>
+    <p><strong>Due Date:</strong> {{ task.due_date|date:"d-m-Y"|default:"Not set" }}</p>
+    <p><strong>Created:</strong> {{ task.created_at|date:"d-m-Y H:i" }}</p>
+</div>
+
+{% if task.member_notes %}
+<div style="background: #F6F4F9; padding: 1rem; border-left: 4px solid #A69CB7; margin-bottom: 1rem; border-radius: 3px;">
+    <h4>Your Notes</h4>
+    <p>{{ task.member_notes }}</p>
+</div>
+{% endif %}
+
+<div>
+    {% if request.user.userprofile.role == 'admin' %}
+    <a href="{% url 'edit_task' task.id %}" style="display: inline-block; padding: 0.5rem 1rem; background: #8a63c2; color: white; text-decoration: none; border-radius: 3px; margin-right: 0.5rem;">Edit Task</a>
+    <a href="{% url 'view_project' task.project.id %}" style="display: inline-block; padding: 0.5rem 1rem; background: #b49ccc; color: white; text-decoration: none; border-radius: 3px;">Back to Project</a>
+    {% else %}
+    {% if request.user == task.assigned_to %}
+    <a href="{% url 'update_task_status' task.id %}" style="display: inline-block; padding: 0.5rem 1rem; background: #9b72cf; color: white; text-decoration: none; border-radius: 3px; margin-right: 0.5rem;">Update Status</a>
+    {% endif %}
+    <a href="{% url 'member_dashboard' %}" style="display: inline-block; padding: 0.5rem 1rem; background: #b49ccc; color: white; text-decoration: none; border-radius: 3px;">Back to Dashboard</a>
+    {% endif %}
+</div>
+{% endblock %}

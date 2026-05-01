@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Task Manager{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Outfit', sans-serif; background: #F4EFFC; color: #2D2142; }
+        nav { background: linear-gradient(135deg, #6B4C9A, #8B66C5); color: #FFFFFF; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(107, 76, 154, 0.2); }
+        nav a { color: #FFFFFF; margin: 0 0.2rem; padding: 0.5rem 1rem; text-decoration: none; font-size: 0.95rem; font-weight: 500; border-radius: 6px; transition: all 0.2s ease; }
+        nav a:hover { background: rgba(255, 255, 255, 0.15); transform: translateY(-1px); }
+        nav span { font-weight: 500; font-size: 0.95rem; }
+        .container { max-width: 1000px; margin: 2rem auto; padding: 2.5rem; background: #FFFFFF; border-radius: 12px; box-shadow: 0 8px 24px rgba(107, 76, 154, 0.08); border: 1px solid #E8DFF2; }
+        .messages { margin-bottom: 1.5rem; }
+        .message { padding: 1rem; margin-bottom: 0.75rem; border-radius: 6px; font-weight: 500; border-left: 4px solid transparent; }
+        .success { background: #EAF4EE; color: #2E654C; border-left-color: #4CAF50; }
+        .error { background: #FCE8EC; color: #9E2A2B; border-left-color: #E63946; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(107, 76, 154, 0.05); }
+        td, th { padding: 1rem; text-align: left; border-bottom: 1px solid #E8DFF2; }
+        th { background: #7A52B3; color: white; font-weight: 500; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #F9F6FC; }
+        form input, form select, form textarea { width: 100%; padding: 0.75rem; border: 1px solid #D6C5EB; border-radius: 6px; margin-top: 0.4rem; background: #FAFAFA; font-family: 'Outfit', sans-serif; transition: all 0.3s ease; }
+        form input:focus, form select:focus, form textarea:focus { outline: none; border-color: #8B66C5; box-shadow: 0 0 0 3px rgba(139, 102, 197, 0.15); background: #FFFFFF; }
+        form label { display: block; margin-top: 1.25rem; font-weight: 600; color: #4A306D; font-size: 0.9rem; }
+        button { padding: 0.6rem 1.2rem; background: linear-gradient(135deg, #7A52B3, #6B4C9A); color: white; border: none; border-radius: 6px; font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 0.95rem; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(122, 82, 179, 0.25); }
+        button:hover { background: linear-gradient(135deg, #6B4C9A, #5C3A86); transform: translateY(-2px); box-shadow: 0 6px 14px rgba(122, 82, 179, 0.35); }
+        h1, h2, h3, h4 { color: #4A306D; margin-bottom: 1rem; font-weight: 600; }
+        h1 { font-size: 2rem; border-bottom: 2px solid #E8DFF2; padding-bottom: 0.5rem; margin-bottom: 1.5rem; }
+    </style>
+</head>
+<body>
+    <nav>
+    <div>
+        <a href="{% url 'home' %}">🏠 Home</a>
+        {% if user.is_authenticated %}
+            {% if user.userprofile.role == 'member' %}
+                <a href="{% url 'member_dashboard' %}">📊 Dashboard</a>
+            {% elif user.is_superuser or user.userprofile.role == 'admin' %}
+                <a href="{% url 'admin_dashboard' %}">⚙️ Dashboard</a>
+                <a href="{% url 'list_members' %}">👥 Members</a>
+                <a href="{% url 'list_projects' %}">📋 Projects</a>
+            {% endif %}
+        {% endif %}
+    </div>
+    {% if user.is_authenticated %}
+    <span>{{ user.username }} | <a href="{% url 'logout' %}">Logout</a></span>
+    {% else %}
+    <span><a href="{% url 'member_login' %}">Member Login</a> | <a href="{% url 'admin_login' %}">Admin Login</a></span>
+    {% endif %}
+    </nav>
+    
+    <div class="container">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

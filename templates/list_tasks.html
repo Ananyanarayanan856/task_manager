@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}All Tasks{% endblock %}
+
+{% block content %}
+<h2>All Tasks</h2>
+<a href="{% url 'create_task' %}" style="display: inline-block; padding: 0.5rem 1rem; background: #9b72cf; color: white; text-decoration: none; border-radius: 3px; margin-right: 0.5rem;">Create New Task</a>
+<a href="{% url 'admin_dashboard' %}" style="display: inline-block; padding: 0.5rem 1rem; background: #b49ccc; color: white; text-decoration: none; border-radius: 3px; margin-bottom: 1rem;">← Back to Dashboard</a>
+{% if tasks %}
+<table style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr style="background: #f7f3fb;">
+            <th style="border: 1px solid #e1d5ef; padding: 0.5rem;">Task Title</th>
+            <th style="border: 1px solid #e1d5ef; padding: 0.5rem;">Project</th>
+            <th style="border: 1px solid #e1d5ef; padding: 0.5rem;">Assigned To</th>
+            <th style="border: 1px solid #e1d5ef; padding: 0.5rem;">Status</th>
+            <th style="border: 1px solid #e1d5ef; padding: 0.5rem;">Due Date</th>
+            <th style="border: 1px solid #e1d5ef; padding: 0.5rem;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in tasks %}
+        <tr>
+            <td style="border: 1px solid #e1d5ef; padding: 0.5rem;">{{ task.title }}</td>
+            <td style="border: 1px solid #e1d5ef; padding: 0.5rem;">{{ task.project.name }}</td>
+            <td style="border: 1px solid #e1d5ef; padding: 0.5rem;">{{ task.assigned_to.username }}</td>
+            <td style="border: 1px solid #e1d5ef; padding: 0.5rem;">
+                <span style="padding: 0.25rem 0.5rem; border-radius: 3px; {% if task.status == 'pending' %}background: #A69CB7; color: white;{% elif task.status == 'in_progress' %}background: #6B4C9A; color: white;{% elif task.status == 'completed' %}background: #9b72cf; color: white;{% else %}background: #b49ccc; color: white;{% endif %}">
+                    {{ task.get_status_display }}
+                </span>
+            </td>
+            <td style="border: 1px solid #e1d5ef; padding: 0.5rem;">{{ task.due_date|date:"d-m-Y"|default:"Not set" }}</td>
+            <td style="border: 1px solid #e1d5ef; padding: 0.5rem;">
+                <a href="{% url 'edit_task' task.id %}" style="color: #8a63c2; text-decoration: none; margin-right: 1rem;">Edit</a>
+                <a href="{% url 'delete_task' task.id %}" onclick="return confirm('Are you sure?')" style="color: #d4789d; text-decoration: none;">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No tasks created yet.</p>
+{% endif %}
+{% endblock %}

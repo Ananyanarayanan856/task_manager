@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}All Projects{% endblock %}
+
+{% block content %}
+<h2>All Projects</h2>
+<a href="{% url 'add_project' %}" style="display: inline-block; padding: 0.5rem 1rem; background: #9b72cf; color: white; text-decoration: none; border-radius: 3px; margin-bottom: 1rem;">➕ Add New Project</a>
+<a href="{% url 'admin_dashboard' %}" style="display: inline-block; margin-left: 0.5rem; padding: 0.5rem 1rem; background: #b49ccc; color: white; text-decoration: none; border-radius: 3px; margin-bottom: 1rem;">← Back to Dashboard</a>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+    {% if projects %}
+        {% for project in projects %}
+        <a href="{% url 'view_project' project.id %}" style="text-decoration: none;">
+            <div style="padding: 1.5rem; border-radius: 5px; color: white; text-align: center; 
+                {% if project.status == 'pending' %}background: #A69CB7; color: white;
+                {% elif project.status == 'in_progress' %}background: #6B4C9A;
+                {% elif project.status == 'completed' %}background: #9b72cf;
+                {% else %}background: #b49ccc;{% endif %} 
+                transition: transform 0.2s; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1);"
+                onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 4px 10px rgba(0,0,0,0.2)';"
+                onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 2px 5px rgba(0,0,0,0.1)';">
+                <h3 style="margin: 0; word-wrap: break-word;">{{ project.name }}</h3>
+                <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">{{ project.get_status_display }}</p>
+                <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem;">Members: {{ project.members.count }}</p>
+                <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem;">Tasks: {{ project.tasks.count }}</p>
+            </div>
+        </a>
+        {% endfor %}
+    {% else %}
+    <p>No projects created yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

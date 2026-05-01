@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Add New Project{% endblock %}
+
+{% block content %}
+<h2>Add New Project</h2>
+
+<form method="POST" style="max-width: 600px;">
+    {% csrf_token %}
+    
+    {% for field in form %}
+        <div style="margin-bottom: 1rem;">
+            {{ field.label_tag }}
+            {% if field.widget.input_type == 'checkbox' %}
+                <div style="border: 1px solid #e1d5ef; padding: 0.5rem; border-radius: 3px;">{{ field }}</div>
+            {% else %}
+                {{ field }}
+            {% endif %}
+            {% if field.errors %}<div style="color: red;">{{ field.errors }}</div>{% endif %}
+        </div>
+    {% endfor %}
+    
+    <button type="submit" style="padding: 0.5rem 1rem; background: #9b72cf; color: white; border: none; border-radius: 3px;">Create Project</button>
+    <a href="{% url 'admin_dashboard' %}" style="margin-left: 0.5rem; padding: 0.5rem 1rem; background: #b49ccc; color: white; text-decoration: none; border-radius: 3px;">← Back to Dashboard</a>
+</form>
+{% endblock %}

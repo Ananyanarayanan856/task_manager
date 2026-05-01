@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<h2>Edit Your Profile</h2>
+
+<form method="POST" style="max-width: 500px;">
+    {% csrf_token %}
+    
+    {% if form.non_field_errors %}
+        <div style="color: red; margin-bottom: 1rem;">{{ form.non_field_errors }}</div>
+    {% endif %}
+    
+    {% for field in form %}
+        <div style="margin-bottom: 1rem;">
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.errors %}<div style="color: red;">{{ field.errors }}</div>{% endif %}
+        </div>
+    {% endfor %}
+    
+    <button type="submit" style="padding: 0.5rem 1rem; background: #9b72cf; color: white; border: none; border-radius: 3px;">Save Changes</button>
+    <a href="{% url 'member_dashboard' %}" style="margin-left: 0.5rem; padding: 0.5rem 1rem; background: #b49ccc; color: white; text-decoration: none; border-radius: 3px;">Cancel</a>
+</form>
+{% endblock %}

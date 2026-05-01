@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if mode == 'edit' %}Edit{% else %}View{% endif %} Project - {{ project.name }}{% endblock %}
+
+{% block content %}
+{% if request.user.userprofile.role == 'admin' %}
+<a href="{% url 'list_projects' %}" style="display: inline-block; margin-bottom: 1rem; padding: 0.5rem 1rem; background: #b49ccc; color: white; text-decoration: none; border-radius: 3px;">← Back to Projects</a>
+{% else %}
+<a href="{% url 'member_dashboard' %}" style="display: inline-block; margin-bottom: 1rem; padding: 0.5rem 1rem; background: #b49ccc; color: white; text-decoration: none; border-radius: 3px;">← Back to Dashboard</a>
+{% endif %}
+
+{% if mode == 'edit' %}
+<h2>Edit Project: {{ project.name }}</h2>
+
+<form method="POST" style="max-width: 600px;">
+    {% csrf_token %}
+    
+    {% for field in form %}
+        <div style="margin-bottom: 1rem;">
+            {{ field.label_tag }}
+            {% if field.widget.input_type == 'checkbox' %}
+                <div style="border: 1px solid #e1d5ef; padding: 0.5rem; border-radius: 3px;">{{ field }}</div>
+            {% else %}
+                {{ field }}
+            {% endif %}
+            {% if field.errors %}<div style="color: red;">{{ field.errors }}</div>{% endif %}
+        </div>
+    {% endfor %}
+    
+    <button type="submit" style="padding: 0.5rem 1rem; background: #8a63c2; color: white; border: none; border-radius: 3px;">Save Changes</button>
+    <a href="{% url 'view_project' project.id %}" style="margin-left: 0.5rem; padding: 0.5rem 1rem; background: #b49ccc; color: white; text-decoration: none; border-radius: 3px;">Cancel</a>
+</form>
+
+{% else %}
+<h2>{{ project.name }}</h2>
+
+<!-- Project Info -->
+<div style="background: #F4EFFC; padding: 1.5rem; border-radius: 5px; margin-bottom: 2rem;">
+    <h3>Project Information</h3>
+    <p><strong>Description:</strong> {{ project.description }}</p>
+    <p><strong>Status:</strong> 
+        <span style="padding: 0.5rem 1rem; border-radius: 3px; {% if project.status == 'pending' %}background: #A69CB7; color: white;{% elif project.status == 'in_progress' %}background: #6B4C9A; color: white;{% elif project.status == 'completed' %}background: #9b72cf; color: white;{% else %}background: #b49ccc; color: white;{% endif %}">
+            {{ project.get_status_display }}
+        </span>
+    </p>
+    <p><strong>Created On:</strong> {{ project.created_at|date:"d-m-Y" }}</p>
+    <p><strong>Completion Time:</strong> {{ project.due_date|date:"d-m-Y" |default:"Not set" }}</p>
+</div>
+
+<!-- Members Section -->
+<div style="background: #fbf8ff; padding: 1.5rem; border-radius: 5px; margin-bottom: 2rem;">
+    <h3>Project Members ({{ project.members.count }})</h3>
+    {% if project.members.all %}
+    <ul style="list-style: none; padding: 0;">
+        {% for member in project.members.all %}
+        <li style="padding: 0.5rem; border-bottom: 1px solid #e1d5ef;">
+            <strong>{{ member.first_name }} {{ member.last_name }}</strong> ({{ member.username }})<br>
+            <small>{{ member.email }}</small>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No members assigned.</p>
+    {% endif %}
+    {% if request.user.userprofile.role == 'admin' %}
+    <a href="{% url 'edit_project' project.id %}" style="display: inline-block; margin-top: 1rem; padding: 0.5rem 1rem; background: #8a63c2; color: white; text-decoration: none; border-radius: 3px;">Edit Members</a>
+    {% endif %}
+</div>
+
+<!-- Tasks Section -->
+<div style="background: #FAF5FF; padding: 1.5rem; border-radius: 5px; margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3 style="margin: 0;">Project Tasks ({{ tasks.count }})</h3>
+        {% if request.user.userprofile.role == 'admin' %}
+        <a href="{% url 'create_task' %}" style="display: inline-block; padding: 0.5rem 1rem; background: #9b72cf; color: white; text-decoration: none; border-radius: 3px;">+ Add Task</a>
+        {% endif %}
+    </div>
+    {% if tasks %}
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="background: #f7f3fb;">
+                <th style="border: 1px solid #e1d5ef; padding: 0.5rem;">Task Title</th>
+                <th style="border: 1px solid #e1d5ef; padding: 0.5rem;">Assigned To</th>
+                <th style="border: 1px solid #e1d5ef; padding: 0.5rem;">Status</th>
+                <th style="border: 1px solid #e1d5ef; padding: 0.5rem;">Due Date</th>
+                <th style="border: 1px solid #e1d5ef; padding: 0.5rem;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in tasks %}
+            <tr>
+                <td style="border: 1px solid #e1d5ef; padding: 0.5rem;">
+                    <a href="{% url 'view_task' task.id %}" style="color: #8a63c2; text-decoration: none; font-weight: bold;">{{ task.title }}</a>
+                </td>
+                <td style="border: 1px solid #e1d5ef; padding: 0.5rem;">{{ task.assigned_to.username }}</td>
+                <td style="border: 1px solid #e1d5ef; padding: 0.5rem;">
+                    <span style="padding: 0.25rem 0.5rem; border-radius: 3px; {% if task.status == 'pending' %}background: #A69CB7; color: white;{% elif task.status == 'in_progress' %}background: #6B4C9A; color: white;{% elif task.status == 'completed' %}background: #9b72cf; color: white;{% else %}background: #b49ccc; color: white;{% endif %}">
+                        {{ task.get_status_display }}
+                    </span>
+                </td>
+                <td style="border: 1px solid #e1d5ef; padding: 0.5rem;">{{ task.due_date|date:"d-m-Y"|default:"Not set" }}</td>
+                <td style="border: 1px solid #e1d5ef; padding: 0.5rem;">
+                    {% if request.user.userprofile.role == 'admin' %}
+                    <a href="{% url 'edit_task' task.id %}" style="color: #8a63c2; text-decoration: none;">Edit</a> | 
+                    <a href="{% url 'delete_task' task.id %}" onclick="return confirm('Are you sure?')" style="color: #d4789d; text-decoration: none;">Delete</a>
+                    {% elif request.user == task.assigned_to %}
+                    <a href="{% url 'update_task_status' task.id %}" style="color: #9b72cf; text-decoration: none;">Update Status</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No tasks in this project yet.</p>
+    {% endif %}
+</div>
+
+<div style="margin-bottom: 2rem;">
+    {% if request.user.userprofile.role == 'admin' %}
+    <a href="{% url 'edit_project' project.id %}" style="display: inline-block; padding: 0.5rem 1rem; background: #8a63c2; color: white; text-decoration: none; border-radius: 3px; margin-right: 0.5rem;">Edit Project</a>
+    <a href="{% url 'list_projects' %}" style="display: inline-block; padding: 0.5rem 1rem; background: #b49ccc; color: white; text-decoration: none; border-radius: 3px;">Back to Projects</a>
+    {% else %}
+    <a href="{% url 'member_dashboard' %}" style="display: inline-block; padding: 0.5rem 1rem; background: #b49ccc; color: white; text-decoration: none; border-radius: 3px;">Back to Dashboard</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

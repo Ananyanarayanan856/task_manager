@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Task Manager{% endblock %}
+
+{% block content %}
+<h1>Welcome to Task Manager</h1>
+<p>Please select your login type:</p>
+<div style="margin-top: 2rem;">
+    <a href="{% url 'member_login' %}" style="display: inline-block; padding: 1rem 2rem; background: #8a63c2; color: white; text-decoration: none; border-radius: 5px; margin-right: 1rem;">Member Login</a>
+    <a href="{% url 'admin_login' %}" style="display: inline-block; padding: 1rem 2rem; background: #d4789d; color: white; text-decoration: none; border-radius: 5px;">Admin Login</a>
+</div>
+{% endblock %}

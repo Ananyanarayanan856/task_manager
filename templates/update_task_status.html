@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Update Task Status - {{ task.title }}{% endblock %}
+
+{% block content %}
+<h2>Update Task: {{ task.title }}</h2>
+
+<div style="background: #F4EFFC; padding: 1rem; border-left: 4px solid #8a63c2; margin-bottom: 2rem; border-radius: 3px;">
+    <h4>Task Details</h4>
+    <p><strong>Project:</strong> {{ task.project.name }}</p>
+    <p><strong>Description:</strong> {{ task.description }}</p>
+    <p><strong>Current Status:</strong> {{ task.get_status_display }}</p>
+</div>
+
+<form method="POST" style="max-width: 600px;">
+    {% csrf_token %}
+    
+    {% for field in form %}
+        <div style="margin-bottom: 1rem;">
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.errors %}<div style="color: red;">{{ field.errors }}</div>{% endif %}
+        </div>
+    {% endfor %}
+    
+    <button type="submit" style="padding: 0.5rem 1rem; background: #9b72cf; color: white; border: none; border-radius: 3px;">Update Status</button>
+    <a href="{% url 'member_dashboard' %}" style="margin-left: 0.5rem; padding: 0.5rem 1rem; background: #b49ccc; color: white; text-decoration: none; border-radius: 3px;">Cancel</a>
+</form>
+{% endblock %}

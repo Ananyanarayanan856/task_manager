@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Task - {{ task.title }}{% endblock %}
+
+{% block content %}
+<h2>Edit Task: {{ task.title }}</h2>
+
+<form method="POST" style="max-width: 600px;">
+    {% csrf_token %}
+    
+    {% for field in form %}
+        <div style="margin-bottom: 1rem;">
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.errors %}<div style="color: red;">{{ field.errors }}</div>{% endif %}
+        </div>
+    {% endfor %}
+    
+    <button type="submit" style="padding: 0.5rem 1rem; background: #8a63c2; color: white; border: none; border-radius: 3px;">Save Changes</button>
+    <a href="{% url 'admin_dashboard' %}" style="margin-left: 0.5rem; padding: 0.5rem 1rem; background: #b49ccc; color: white; text-decoration: none; border-radius: 3px;">← Back to Dashboard</a>
+    
+</form>
+{% endblock %}
